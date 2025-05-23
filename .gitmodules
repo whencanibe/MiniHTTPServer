@@ -1,0 +1,3 @@
+[submodule "cmake-build-debug/_deps/json-src"]
+	path = cmake-build-debug/_deps/json-src
+	url = https://github.com/nlohmann/json
