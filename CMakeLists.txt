@@ -5,7 +5,9 @@ set(CMAKE_CXX_STANDARD 20)
 
 add_executable(MiniHttpServer src/main.cpp
         src/server.cpp
-        include/server.h)
+        include/server.h
+        src/session.cpp
+        include/session.h)
 
 # nlohmann/json via FetchContent (git)
 include(FetchContent)
