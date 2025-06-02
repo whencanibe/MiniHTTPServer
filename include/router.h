@@ -1,11 +1,5 @@
-//
-// Created by 조언약 on 5/30/25.
-//
-
 #ifndef ROUTER_H
 #define ROUTER_H
-
-
 
 #include <string>
 #include <functional>

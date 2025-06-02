@@ -4,6 +4,9 @@
 #include <string>
 #include <unordered_map>
 
+class Router;
+class DB;
+
 // 요청(request) 파싱과 응답(response) 직렬화를 위한 구조체 선언
 struct Request {
     std::string method;
@@ -25,7 +28,7 @@ struct Response {
 class Session {
 public:
     // 생성자: 클라이언트 소켓 FD를 넘겨받음
-    explicit Session(int client_fd);
+    explicit Session(int client_fd, const Router& router, DB& db);
 
     // 소멸자: FD 닫기
     ~Session();
@@ -35,8 +38,9 @@ public:
 
 private:
     int client_fd_;
+    const Router& router_;
+    DB& db_;
 
-    // 내부 헬퍼
     Request  read_request();
     Response dispatch(const Request& req);
     void     send_response(const Response& res);

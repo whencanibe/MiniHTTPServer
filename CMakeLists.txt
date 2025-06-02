@@ -9,7 +9,11 @@ add_executable(MiniHttpServer src/main.cpp
         src/session.cpp
         include/session.h
         src/router.cpp
-        include/router.h)
+        include/router.h
+        src/util.cpp
+        include/util.h
+        src/db.cpp
+        include/db.h)
 
 # nlohmann/json via FetchContent (git)
 include(FetchContent)
