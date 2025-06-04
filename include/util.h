@@ -1,7 +1,3 @@
-//
-// Created by 조언약 on 6/2/25.
-//
-
 #ifndef UTIL_H
 #define UTIL_H
 
