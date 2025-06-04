@@ -13,7 +13,7 @@ Server::Server(uint16_t port)
  : port_(port), listen_fd_(-1), running_(false), router_(), db_()
 {
     //create socket
-    listen_fd_ = ::socket(AF_INET, SOCK_STREAM, 0);
+    listen_fd_ = ::socket(AF_INET, SOCK_STREAM, 0); // IPv4 , TCP , 프로토콜 자동선택
     if (listen_fd_ < 0) {
         perror("socket");
         return;
@@ -21,12 +21,12 @@ Server::Server(uint16_t port)
 
     // Address structure
     sockaddr_in addr{}; // initialize 0
-    addr.sin_family = AF_INET;
-    addr.sin_addr.s_addr = INADDR_ANY;       // 모든 인터페이스에서 바인딩
+    addr.sin_family = AF_INET; //  Address Family: Internet - IPv4 주소 체계
+    addr.sin_addr.s_addr = INADDR_ANY;       // 모든 IP로부터의 연결을 수락
     addr.sin_port = htons(port_);            // Port number
 
-    // call bind
-    if (::bind(listen_fd_, reinterpret_cast<sockaddr*>(&addr), sizeof(addr)) < 0) {
+    // call bind - 소켓, 주소 구조체, 구조체 크기
+    if (::bind(listen_fd_, (sockaddr*)(&addr), sizeof(addr)) < 0) {
         perror("bind");
         ::close(listen_fd_);
         listen_fd_ = -1;

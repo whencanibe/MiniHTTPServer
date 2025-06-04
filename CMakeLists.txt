@@ -15,6 +15,12 @@ add_executable(MiniHttpServer src/main.cpp
         src/db.cpp
         include/db.h)
 
+add_custom_command(TARGET MiniHttpServer POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/static
+        ${CMAKE_BINARY_DIR}/static)
+
+
 # nlohmann/json via FetchContent (git)
 include(FetchContent)
 FetchContent_Declare(

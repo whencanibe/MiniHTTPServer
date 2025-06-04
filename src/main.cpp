@@ -6,106 +6,56 @@
 
 using json = nlohmann::json;
 
-// 메모리 상의 간단 CRUD 저장소
-std::unordered_map<int, std::string> notes;
-int next_id = 1;
-
-// “/notes” 컬렉션 GET 핸들러
-Response list_notes(const Request& req) {
-    json arr = json::array();
-    for (auto& [id, content] : notes) {
-        arr.push_back({{"id", id}, {"content", content}});
-    }
-    return {200, "application/json", arr.dump()};
+// GET handler: “/hello”
+Response hello_handler(const Request&) {
+    return {200, "text/plain", "Hello, World!"};
 }
 
-// “/notes” POST 핸들러
-Response create_note(const Request& req) {
+// POST handler: “/api/echo”
+Response echo_handler(const Request& req) {
     try {
         auto j = json::parse(req.body);
-        if (!j.contains("content")) {
-            return {400, "text/plain", "Missing 'content' field"};
-        }
-        int id = next_id++;
-        notes[id] = j["content"].get<std::string>();
-        return {201, "application/json",
-                json({{"id", id}, {"content", notes[id]}}).dump()};
+        return {200, "application/json", j.dump()};
     } catch (...) {
-        return {400, "text/plain", "Invalid JSON"};
+        return {400, "text/plain", "Bad JSON"};
     }
 }
 
-// “/notes/{id}” PUT 핸들러 (경로 parsing 단순화: /notes/숫자)
-Response update_note(const Request& req) {
-    // req.path가 "/notes/3" 같은 형식이라고 가정
-    const std::string& path = req.path; // 예: "/notes/3"
-    size_t pos = path.find_last_of('/');
-    if (pos == std::string::npos) {
-        return {400, "text/plain", "Invalid path"};
-    }
-    int id = std::stoi(path.substr(pos + 1));
-    if (notes.find(id) == notes.end()) {
-        return {404, "text/plain", "Not Found"};
-    }
-    try {
-        auto j = json::parse(req.body);
-        if (!j.contains("content")) {
-            return {400, "text/plain", "Missing 'content' field"};
+// 정적 파일 제공 핸들러 팩토리
+// ex) /static/index.html 요청 시 프로젝트 루트의 static/index.html 파일 반환
+std::function<Response(const Request&)> make_static_handler(const std::string& doc_root) {
+    return [doc_root](const Request& req) -> Response {
+        // req.path 예: "/static/index.html"
+        // doc_root은 프로젝트 루트 기준 "static"
+        std::string rel = req.path.substr(8); // "/static/" 이후 부분만
+        std::string full_path = doc_root + "/" + rel; // "static/index.html"
+        bool ok;
+        std::string body = read_file(full_path, ok);
+        if (!ok) {
+            return {404, "text/plain", "File Not Found"};
         }
-        notes[id] = j["content"].get<std::string>();
-        return {200, "application/json",
-                json({{"id", id}, {"content", notes[id]}}).dump()};
-    } catch (...) {
-        return {400, "text/plain", "Invalid JSON"};
-    }
-}
-
-// “/notes/{id}” DELETE 핸들러
-Response delete_note(const Request& req) {
-    const std::string& path = req.path; // "/notes/3"
-    size_t pos = path.find_last_of('/');
-    if (pos == std::string::npos) {
-        return {400, "text/plain", "Invalid path"};
-    }
-    int id = std::stoi(path.substr(pos + 1));
-    if (notes.erase(id) == 0) {
-        return {404, "text/plain", "Not Found"};
-    }
-    return {204, "text/plain", ""}; // No Content
+        // 확장자 추출
+        size_t pos = full_path.find_last_of('.');
+        std::string ext = (pos == std::string::npos) ? "" : full_path.substr(pos + 1);
+        return {200, mime_type(ext), std::move(body)};
+    };
 }
 
 int main() {
-    constexpr uint16_t PORT = 8080;
+    constexpr uint16_t PORT = 8080; // 16 bit for TCP header
+    constexpr auto DOC_ROOT = "static";  // static file directory
 
     Server server(PORT);
 
     // GET /hello
-    server.add_route("GET", "/hello",
-                     [](const Request&) -> Response {
-                         return {200, "text/plain", "Hello, World!"};
-                     });
+    server.add_route("GET", "/hello", hello_handler);
 
-    // JSON echo 예시
-    server.add_route("POST", "/api/echo",
-                     [](const Request& req) -> Response {
-                         try {
-                             auto j = json::parse(req.body);
-                             return {200, "application/json", j.dump()};
-                         } catch (...) {
-                             return {400, "text/plain", "Bad JSON"};
-                         }
-                     });
+    // POST /api/echo
+    server.add_route("POST", "/api/echo", echo_handler);
 
-    // 전체 노트 조회
-    server.add_route("GET", "/notes", list_notes);
-
-    // 새 노트 생성
-    server.add_route("POST", "/notes", create_note);
-
-    // PUT /notes/{id}
-    server.add_route("PUT", "/notes", update_note);
-    // DELETE /notes/{id}
-    server.add_route("DELETE", "/notes", delete_note);
+    // serve static files: /static/*
+    auto static_handler = make_static_handler(DOC_ROOT);
+    server.add_route("GET", "/static", static_handler);
 
     server.run();
     return 0;

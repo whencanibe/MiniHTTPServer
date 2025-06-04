@@ -32,20 +32,21 @@ Session::~Session() {
 
 // -- handle(): 요청 읽고, 처리하고, 응답 보내기 --
 void Session::handle() {
-    // 1) 요청 파싱
+    // Parse the incoming request
     Request req = read_request();
 
-    // 2) 경로에 따라 핸들러 호출
+    // call a handler for the request
     Response res = dispatch(req);
 
-    // 여기 로그 출력 추가해 보세요.
+    // print log on console
     std::cout << "[SESSION] Logging request: "
               << req.method << " " << req.path
               << " -> status " << res.status << "\n";
 
+    // save log into database
     db_.insertLog(req.method, req.path, res.status);
 
-    // 3) 응답 전송
+    // send the response
     send_response(res);
 }
 
@@ -118,61 +119,11 @@ Request Session::read_request() {
     return req;
 }
 
-// Request Session::read_request() {
-//     Request req;
-//     std::string line;
-//     std::ostringstream body_buf;
-//     char buf[1024];
-//
-//     // Read Request-Line
-//     recv(client_fd_, buf, sizeof(buf), 0);
-//     std::istringstream iss(buf);
-//     std::getline(iss, line);
-//     std::istringstream rl(line);
-//     rl >> req.method >> req.path >> req.version;
-//
-//     // ② 헤더 읽기 (간단히 빈 줄 전까지)
-//     while (std::getline(iss, line) && line != "\r") {
-//         auto pos = line.find(':');
-//         if (pos != std::string::npos) {
-//             std::string key = line.substr(0, pos);
-//             std::string val = line.substr(pos + 1);
-//             req.headers[key] = val;
-//         }
-//     }
-//
-//     // ③ 바디 읽기 (Content-Length 있을 때만)
-//     auto it = req.headers.find("Content-Length");
-//     if (it != req.headers.end()) {
-//         int len = std::stoi(it->second);
-//         std::vector<char> body(len);
-//         recv(client_fd_, body.data(), len, 0);
-//         req.body.assign(body.begin(), body.end());
-//     }
-//
-//     return req;
-// }
 
-// -- dispatch(): 라우팅 테이블 대신 if-else 예시 --
 Response Session::dispatch(const Request& req) {
     return router_.dispatch(req);
 }
 
-// -- send_response(): 직렬화된 문자열 전송 --
-// void Session::send_response(const Response& res) {
-//     std::string raw = res.toString();
-//     size_t total = raw.size();
-//     size_t sent = 0;
-//     while (sent < total) {
-//         ssize_t n = ::send(client_fd_, raw.data() + sent,
-//                            total - sent, 0);
-//         if (n <= 0) {
-//             perror("send");
-//             break;
-//         }
-//         sent += static_cast<size_t>(n);
-//     }
-// }
 
 void Session::send_response(const Response& res) {
     std::string raw = res.toString();

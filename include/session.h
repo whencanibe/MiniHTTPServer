@@ -21,7 +21,7 @@ struct Response {
     std::string content_type;
     std::string body;
 
-    // HTTP 응답 문자열로 직렬화
+    // Stringify HTTP response
     std::string toString() const;
 };
 

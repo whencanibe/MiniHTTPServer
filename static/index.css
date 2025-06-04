@@ -1,0 +1,87 @@
+body{
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    box-sizing: border-box;
+    background-color: #f5f5f5;
+}
+
+.body-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.nav-bar{
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    padding: 1.5rem 2rem;
+}
+
+.rounded-btn{
+    padding: 0.75rem 1rem;
+    border-radius: 40px;
+    background-color: #f5f5f5;
+    color: black;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.signup-btn{
+    background-color: brown;
+    color : white;
+}
+
+.signup-btn:hover{
+    padding: 0.9rem 1rem;
+    transition: all 0.3s;
+}
+
+.login-btn:hover{
+    background-color: brown;
+    color: white;
+    transition: all 0.3s;
+}
+
+.start-btn{
+    background-color: brown;
+    color:white;
+}
+
+.intro{
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    height: 80vh;
+    background-color: pink;
+}
+
+.intro h1{
+    font-size: 3rem;
+    font-weight: 900;
+    margin-bottom: 0%;
+}
+
+.box-container{
+    position: relative;
+    top : -7rem;
+}
+
+.squared-box{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+    flex-direction: column;
+    padding: 2rem;
+    border-radius: 30px;
+    /* box-shadow: 0 0 10px rgba(0,0,0,0.1); */
+    margin: 2rem;
+}
