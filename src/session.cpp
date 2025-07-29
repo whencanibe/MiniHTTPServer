@@ -44,7 +44,7 @@ void Session::handle() {
               << " -> status " << res.status << "\n";
 
     // save log into database
-    db_.insertLog(req.method, req.path, res.status);
+    //db_.insertLog(req.method, req.path, res.status);
 
     // send the response
     send_response(res);

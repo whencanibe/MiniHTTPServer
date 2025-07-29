@@ -4,7 +4,6 @@
 #include <arpa/inet.h> // sockaddr_in, htons
 #include <sys/socket.h> // socket, bind, listen, accept
 #include <unistd.h> // close
-#include <cstring> // memset
 #include <iostream>
 #include <list>
 
