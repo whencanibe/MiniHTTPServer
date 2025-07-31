@@ -1,5 +1,6 @@
-# Modules / 구성 요소
----
+# MiniHTTPServer
+
+# Modules
 
 ## server (server.h / server.cpp)
 **EN:**  
@@ -12,7 +13,6 @@ Entry point of the network layer:
 - TCP 소켓 생성/바인딩/리스닝(`socket()`, `bind()`, `listen()`).
 - `acceptLoop()`에서 들어오는 연결마다 `Session(client_fd, router, db)`를 생성해 `handle()` 호출.
 
----
 
 ## router (router.h / router.cpp)
 **EN:**  
@@ -25,7 +25,6 @@ HTTP 경로와 핸들러를 관리하는 라우터:
 - `add_route(method, path, handler)`: `"METHOD PATH"` 키로 핸들러 등록.
 - `dispatch(req)`: `req.method + " " + req.path`을 찾아 실행, 동적 경로(prefix 매칭)도 지원.
 
----
 
 ## session (session.h / session.cpp)
 **EN:**  
@@ -42,7 +41,6 @@ Handles one TCP connection’s HTTP request/response cycle:
 3. `send_response(res)`: `Response` 직렬화 후 전송(전송 루프 포함).
 4. `DB` 참조를 통해 요청을 SQLite에 로깅.
 
----
 
 ## main (src/main.cpp)
 **EN:**  
@@ -61,7 +59,6 @@ Bootstraps the server:
     - `/static/*` 경로로 정적 파일 제공(`util` 사용).
 3. `run()` 호출로 클라이언트 연결 수락 및 요청 처리 시작.
 
----
 
 ## util (util.h / util.cpp)
 **EN:**  
