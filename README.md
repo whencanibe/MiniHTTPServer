@@ -1,4 +1,7 @@
 # MiniHTTPServer
+MiniHTTPServer is a lightweight C++20 web server that shows the full request → response flow from raw TCP sockets to REST-style JSON APIs, static-file delivery, and SQLite logging
+
+![flow](img/minihttpserver_flow.jpg)
 
 # Modules
 
