@@ -13,7 +13,8 @@ add_executable(MiniHttpServer src/main.cpp
         src/util.cpp
         include/util.h
         src/db.cpp
-        include/db.h)
+        include/db.h
+        include/thread_pool.h)
 
 add_custom_command(TARGET MiniHttpServer POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory

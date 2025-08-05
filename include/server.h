@@ -4,6 +4,7 @@
 
 #include "db.h"
 #include "router.h"
+#include "thread_pool.h"
 
 class Server {
 public:
@@ -24,6 +25,7 @@ private:
     bool running_;
     Router router_;
     DB db_;
+    ThreadPool pool_{8};
 };
 
 

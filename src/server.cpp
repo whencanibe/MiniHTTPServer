@@ -84,7 +84,10 @@ void Server::acceptLoop() {
             continue;
         }
 
-        Session session(client_fd, router_, db_);
-        session.handle();
+        pool_.enqueue([this, client_fd] {
+            Session session(client_fd, router_, db_);
+            session.handle();
+        });
+
     }
 }
